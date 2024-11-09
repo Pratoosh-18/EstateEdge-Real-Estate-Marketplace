@@ -1,25 +1,19 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import ListingCard from '../components/ListingCard';
+import { getAllListings } from '../api/ListingsApi';
 
 const Listings = () => {
 
   const [listings, setListings] = useState([])
 
+  const getList = async () => {
+    const list = await getAllListings();
+    setListings(list)
+  }
   useEffect(() => {
-    const getAllListings = async () => {
-      try {
-        const response = await axios.get("http://localhost:8000/api/v1/listing/getListings");
-        console.log(response.data.listings);
-        const reversedListings = response.data.listings ? response.data.listings.reverse() : [];
-        setListings(reversedListings);
-      } catch (error) {
-        console.error("Error fetching listings:", error);
-        setListings([]);
-      }
-    };
   
-    getAllListings();
+    getList();
   }, []);
 
   return (
