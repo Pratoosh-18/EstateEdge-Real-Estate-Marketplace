@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
+import { login } from '../api/userApi';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -9,7 +10,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { setUser } = useAuth(); // Get setUser from AuthContext
+  const { setUser } = useAuth(); 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -17,21 +18,18 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:8000/api/v1/user/login", { email, password });
-      console.log(response.data)
-      const userData = response.data.user;
-      console.log(userData)
-      const accessToken = response.data.token;
-
-      localStorage.setItem("realestatert", accessToken);
-      setUser(userData); // Store user in context
-      setError('');
-
-      navigate("/listings");
+      const data = await login(email,password);
+      setUser(data); 
+      if(data){
+        setError('');
+        navigate("/listings");
+      }else{
+        setError('Invalid email or password');
+      }
     } catch (err) {
       setError('Invalid email or password');
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
   };
 
