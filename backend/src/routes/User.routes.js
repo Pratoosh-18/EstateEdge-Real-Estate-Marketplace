@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { loginUser,registerUser,getCurrentUser } from "../controllers/User.controller.js";
+import { loginUser,registerUser,getCurrentUser, logoutUser } from "../controllers/User.controller.js";
 
 const userRoutes = Router()
 
@@ -10,8 +10,11 @@ userRoutes.route("/register").post(
 userRoutes.route("/login").post(
     loginUser
 )
-userRoutes.route("/currentUser").get(
+userRoutes.route("/currentUser").post(
     verifyJWT, getCurrentUser
+)
+userRoutes.route("/logout").post(
+    logoutUser
 )
 
 export default userRoutes

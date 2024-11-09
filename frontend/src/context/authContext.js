@@ -1,25 +1,48 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { isAuthenticated, removeToken } from '../services/authService';
+// src/context/AuthContext.js
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [isAuth, setIsAuth] = useState(false);
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        setIsAuth(isAuthenticated());
-    }, []);
+    // Function to check if the user is logged in
+    const fetchCurrentUser = async () => {
+        try {
+            const token = localStorage.getItem("realestatert");
+            // console.log(token);
 
-    const logout = () => {
-        removeToken();
-        setIsAuth(false);
+            const response = await axios.post(
+                'http://localhost:8000/api/v1/user/currentUser',
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, 
+                    }
+                }
+            );
+
+            console.log(response.data.user);
+            setUser(response.data.user)
+        } catch (error) {
+            console.error("User is not authenticated:", error);
+            setUser(null);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const values = { isAuth , logout }
+    useEffect(() => {
+        fetchCurrentUser();
+    }, []);
 
     return (
-        <AuthContext.Provider value={values}>
+        <AuthContext.Provider value={{ user, setUser, loading }}>
             {children}
         </AuthContext.Provider>
     );
 };
+
+export const useAuth = () => useContext(AuthContext);

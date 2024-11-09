@@ -3,6 +3,7 @@ import { ApiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { v2 as cloudinary } from 'cloudinary';
 import fileUpload from 'express-fileupload'; // Ensure this middleware is used in your Express app
+import jwt from "jsonwebtoken"
 
 async function uploading(file, folder) {
     const options = {
@@ -12,16 +13,13 @@ async function uploading(file, folder) {
     return await cloudinary.uploader.upload(file.tempFilePath, options);
 }
 
-const generateAccessAndRefreshTokens = async (userId) => {
-    const user = await User.findById(userId);
-    const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateRefreshToken();
-
-    user.refreshToken = refreshToken;
-    await user.save({ validateBeforeSave: false });
-
-    return { accessToken, refreshToken };
+const generateAccessToken = (userId) => {
+    return jwt.sign({ _id: userId }, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: "7d" // Set to a reasonable expiration time (e.g., 7 days)
+    });
 };
+
+
 
 const registerUser = asyncHandler(async (req, res) => {
     console.log("Register called");
@@ -62,41 +60,46 @@ const registerUser = asyncHandler(async (req, res) => {
 
     const createdUser = await User.findById(user._id);
     return res.status(200).json({ createdUser });
-}); 
+});
 
 
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
 
-    if (!user) {
-        throw new ApiError(401, "Invalid email");
-    }
+    if (!user) throw new ApiError(401, "Invalid email");
+    if (!await user.isPasswordCorrect(password)) throw new ApiError(401, "Invalid password");
 
-    const isPassTrue = await user.isPasswordCorrect(password);
-    if (!isPassTrue) {
-        throw new ApiError(401, "Invalid password");
-    }
-
-    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
-    const updatedUser = await User.findById(user._id).select("-password");
-
+    const accessToken = generateAccessToken(user._id);
+    
     const options = {
         httpOnly: true,
-        secure: false,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'Lax',
-        maxAge: 24 * 60 * 60 * 1000
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     };
 
-    return res.status(200)
+    res.status(200)
         .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
-        .json({ updatedUser, at: accessToken });
+        .json({ user: await User.findById(user._id).select("-password"),
+            token:accessToken
+         });
 });
+
 
 const getCurrentUser = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user?._id);
-    res.status(200).json({ user });
+    if (!req.user) throw new ApiError(401, "User not authenticated");
+    res.status(200).json({ user: req.user });
 });
 
-export { registerUser, loginUser, getCurrentUser };
+const logoutUser = asyncHandler(async (req, res) => {
+    res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Lax'
+    });
+    res.status(200).json({ message: "Logged out successfully" });
+});
+
+
+export { registerUser, loginUser, getCurrentUser,logoutUser };
