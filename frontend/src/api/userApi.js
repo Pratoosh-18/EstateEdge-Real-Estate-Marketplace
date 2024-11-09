@@ -4,7 +4,7 @@ const fetchCurrentUser = async () => {
     try {
         const token = localStorage.getItem("realestatert");
 
-        const response = await axios.post('http://localhost:8000/api/v1/user/currentUser',
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_API}/api/v1/user/currentUser`,
             {},
             {
                 headers: {
@@ -23,7 +23,7 @@ const fetchCurrentUser = async () => {
 
 const login = async (email,password) => {
     try {
-        const response = await axios.post("http://localhost:8000/api/v1/user/login", { email, password });
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_API}/api/v1/user/login`, { email, password });
         const userData = response.data.user;
         const accessToken = response.data.token;
         localStorage.setItem("realestatert", accessToken);

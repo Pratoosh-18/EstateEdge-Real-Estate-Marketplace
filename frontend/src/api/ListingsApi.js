@@ -14,7 +14,7 @@ const shuffleArray = (array) => {
 
 export const fetchListings = async () => {
   try {
-    const response = await axios.get("http://localhost:8000/api/v1/listing/getListings");
+    const response = await axios.get(`${process.env.REACT_APP_BACKEND_API}/api/v1/listing/getListings`);
 
     if (Array.isArray(response.data.listings)) {
       const listings = response.data.listings;
