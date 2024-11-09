@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { buyListing, createListing, getListings, getUserListings, deleteListing } from '../controllers/Listing.controller.js';
+import { buyListing, createListing, getListings, getUserListings, deleteListing, getListing } from '../controllers/Listing.controller.js';
 
 const listingRoutes = Router();
 
@@ -8,5 +8,6 @@ listingRoutes.get('/getListings', getListings);
 listingRoutes.get('/getUserListings', getUserListings);
 listingRoutes.post('/buyListing', buyListing);
 listingRoutes.delete('/deleteListing',deleteListing);
+listingRoutes.get('/getListing/:listingId', getListing);
 
 export default listingRoutes;
