@@ -7,6 +7,7 @@ import Profile from "./pages/Profile"
 import Login from "./pages/Login"
 import Signup from "./pages/Signup"
 import Layout from './Layout/Layout';
+import ListingDetails from './pages/ListingDetails';
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/listings" element={<Listings />} />
+          <Route path="/listing/:id" element={<ListingDetails />} />
           <Route path="/about" element={<About />} />
 
           

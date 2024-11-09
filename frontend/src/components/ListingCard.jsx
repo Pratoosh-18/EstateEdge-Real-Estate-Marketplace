@@ -44,17 +44,17 @@ const ListingCard = ({
               <p className="text-xs text-gray-600 mb-2">{desc}</p>
             </div>
             <div className="mt-auto">
-              <div className="mb-2 flex gap-2">
+              <div className="mb-2 flex gap-2 items-center">
                 <span className="text-gray-900 text-base">
                   {discountedPrice
                     ? `$${discountedPrice.toLocaleString()}`
                     : `$${originalPrice.toLocaleString()}`}
                 </span>
-                {/* {discountedPrice && (
-                  <span className="text-gray-500 text-sm line-through">
+                {discountedPrice && (
+                  <span className="text-gray-500 text-sm line-through h-full flex justify-center items-center">
                     {`$${originalPrice.toLocaleString()}`}
                   </span>
-                )} */}
+                )}
               </div>
               <div className="flex items-center text-gray-600 text-xs gap-2">
                 <div className="flex items-center gap-1">
