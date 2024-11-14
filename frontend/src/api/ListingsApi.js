@@ -47,4 +47,13 @@ const fetchListingDetails = async (id) => {
     }
 };
 
-export { fetchListings, getAllListings,fetchListingDetails }
+const createListing = async (formDataToSend) => {
+    const response = await axios.post("http://localhost:8000/api/v1/listing/create",
+        formDataToSend,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+
+    return response.data
+}
+
+export { fetchListings, getAllListings,fetchListingDetails,createListing }
