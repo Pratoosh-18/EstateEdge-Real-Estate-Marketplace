@@ -9,6 +9,8 @@ const Listings = () => {
   const [sortOrder, setSortOrder] = useState("");
   const [hasParking, setHasParking] = useState(false);
   const [isFurnished, setIsFurnished] = useState(false);
+  const [minBedrooms, setMinBedrooms] = useState(""); // State for bedroom filter
+  const [isFilterVisible, setIsFilterVisible] = useState(false); // Control filter visibility on smaller screens
 
   const getList = async () => {
     const list = await getAllListings();
@@ -20,7 +22,6 @@ const Listings = () => {
     getList();
   }, []);
 
-  // Handle sorting based on selected order
   const handleSort = (order) => {
     setSortOrder(order);
     let sortedListings = [...listings];
@@ -32,55 +33,57 @@ const Listings = () => {
     setListings(sortedListings);
   };
 
-  // Handle search and reset to original list if search is cleared
   const handleSearch = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
-    applyFilters(query, hasParking, isFurnished);
+    applyFilters(query, hasParking, isFurnished, minBedrooms);
   };
 
-  // Apply filters for search, parking, and furnished
-  const applyFilters = (query, parking, furnished) => {
+  const applyFilters = (query, parking, furnished, bedrooms) => {
     let filteredListings = allListings;
 
-    // Search filter
     if (query) {
       filteredListings = filteredListings.filter((listing) =>
         listing.address.toLowerCase().includes(query.toLowerCase())
       );
     }
-
-    // Parking filter
     if (parking) {
       filteredListings = filteredListings.filter((listing) => listing.parking);
     }
-
-    // Furnished filter
     if (furnished) {
       filteredListings = filteredListings.filter((listing) => listing.furnished);
+    }
+    if (bedrooms) {
+      filteredListings = filteredListings.filter(
+        (listing) => listing.bedrooms >= parseInt(bedrooms, 10)
+      );
     }
 
     setListings(filteredListings);
   };
 
-  // Handle Parking checkbox
   const handleParkingChange = () => {
     const newParkingStatus = !hasParking;
     setHasParking(newParkingStatus);
-    applyFilters(searchQuery, newParkingStatus, isFurnished);
+    applyFilters(searchQuery, newParkingStatus, isFurnished, minBedrooms);
   };
 
-  // Handle Furnished checkbox
   const handleFurnishedChange = () => {
     const newFurnishedStatus = !isFurnished;
     setIsFurnished(newFurnishedStatus);
-    applyFilters(searchQuery, hasParking, newFurnishedStatus);
+    applyFilters(searchQuery, hasParking, newFurnishedStatus, minBedrooms);
+  };
+
+  const handleBedroomsChange = (e) => {
+    const value = e.target.value;
+    setMinBedrooms(value);
+    applyFilters(searchQuery, hasParking, isFurnished, value);
   };
 
   return (
-    <div className="flex">
-      {/* Sidebar */}
-      <div className="w-1/4 p-4 bg-gray-100">
+    <div className="flex flex-col md:flex-row">
+      {/* Sidebar for larger screens */}
+      <div className={`w-full md:w-1/4 p-4 bg-gray-100 ${isFilterVisible ? 'block' : 'hidden md:block'}`}>
         <h2 className="text-lg font-semibold mb-4">Filter Options</h2>
         <div>
           <p>Search by location :</p>
@@ -102,6 +105,15 @@ const Listings = () => {
             <option value="low-to-high">Low to High</option>
             <option value="high-to-low">High to Low</option>
           </select>
+
+          <p>Minimum Bedrooms:</p>
+          <input
+            type="number"
+            placeholder="Number of bedrooms"
+            value={minBedrooms}
+            onChange={handleBedroomsChange}
+            className="w-full p-2 mb-4 border border-gray-300 rounded"
+          />
 
           <div className="mb-4">
             <label className="inline-flex items-center">
@@ -128,6 +140,14 @@ const Listings = () => {
           </div>
         </div>
       </div>
+
+      {/* Toggle button for small screens */}
+      <button
+        onClick={() => setIsFilterVisible(!isFilterVisible)}
+        className="md:hidden border-2 p-2 w-full text-center"
+      >
+        {isFilterVisible ? "Hide Filters" : "Show Filters"}
+      </button>
 
       {/* Listings */}
       <div className="flex-1 flex flex-wrap justify-center gap-5 my-4">

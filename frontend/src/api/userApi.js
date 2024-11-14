@@ -21,7 +21,7 @@ const fetchCurrentUser = async () => {
     }
 };
 
-const login = async (email,password) => {
+const login = async (email, password) => {
     try {
         const response = await axios.post(`${process.env.REACT_APP_BACKEND_API}/api/v1/user/login`, { email, password });
         const userData = response.data.user;
@@ -29,11 +29,28 @@ const login = async (email,password) => {
         localStorage.setItem("realestatert", accessToken);
 
         return userData;
-        
+
     } catch (err) {
 
         return null;
     }
 }
 
-export { fetchCurrentUser,login }
+const registerUser = async (formData) => {
+    try {
+        const response = await axios.post(
+            `${process.env.REACT_APP_BACKEND_API}/api/v1/user/register`,
+            formData,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export { fetchCurrentUser, login, registerUser }

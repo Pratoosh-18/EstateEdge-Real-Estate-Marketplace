@@ -103,7 +103,11 @@ const getListing = asyncHandler(async (req, res) => {
 
 
 const getUserListings = asyncHandler(async (req, res) => {
+
+    console.log(" Get user listings called ")
     const { email } = req.body; // Get email from request parameters
+
+    console.log(email)
 
     if (!email) {
         throw new ApiError(400, "Email parameter is required");
