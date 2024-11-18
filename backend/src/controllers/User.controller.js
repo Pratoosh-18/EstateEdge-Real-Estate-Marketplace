@@ -15,7 +15,7 @@ async function uploading(file, folder) {
 
 const generateAccessToken = (userId) => {
     return jwt.sign({ _id: userId }, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: "7d" // Set to a reasonable expiration time (e.g., 7 days)
+        expiresIn:process.env.ACCESS_TOKEN_EXPIRY,
     });
 };
 
