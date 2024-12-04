@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
@@ -10,7 +10,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { setUser } = useAuth(); 
+  const { setUser } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -18,12 +18,12 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const data = await login(email,password);
-      setUser(data); 
-      if(data){
+      const data = await login(email, password);
+      setUser(data);
+      if (data) {
         setError('');
         navigate("/listings");
-      }else{
+      } else {
         setError('Invalid email or password');
       }
     } catch (err) {
@@ -32,6 +32,17 @@ const Login = () => {
       setIsLoading(false)
     }
   };
+
+  const reDirect = async () => {
+    const token = localStorage.getItem("realestatert")
+    if (token) {
+      navigate("/")
+    }
+  }
+
+  useEffect(() => {
+    reDirect();
+  }, [])
 
   return (
     <div className="flex items-center justify-center h-[80vh] bg-gray-100">
