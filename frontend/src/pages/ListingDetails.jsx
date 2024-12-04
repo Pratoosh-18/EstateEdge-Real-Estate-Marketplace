@@ -4,6 +4,7 @@ import axios from 'axios';
 import { fetchListingDetails } from '../api/ListingsApi';
 import { Carousel } from "react-responsive-carousel";
 import { FaInfoCircle, FaMapMarkerAlt, FaUser, FaEnvelope, FaBed, FaBath, FaCouch, FaParking, FaDollarSign } from "react-icons/fa";
+import MapWithGoogleEmbedNoAPI from '../components/Map';
 
 const ListingDetails = () => {
     const { id } = useParams();
@@ -124,6 +125,12 @@ const ListingDetails = () => {
 
                     )}
                 </div>
+
+                <div className='mt-6 mb-3 md:text-xl'>View on map : </div>
+                <div className='w-full md:w-3/4 bg-gray-100 p-2 rounded-lg md:h-[500px] h-[300px]'>
+                    <MapWithGoogleEmbedNoAPI loc={listing.address} />
+                </div>
+
             </div>
             <div className="border-t border-gray-300 mt-6 pt-4 text-center text-gray-600 text-xs">
                 <p>Listing created on {new Date(listing.createdAt).toLocaleDateString()}</p>
