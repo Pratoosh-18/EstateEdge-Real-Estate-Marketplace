@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '../context/authContext';
 import { Link, useNavigate } from 'react-router-dom';
+import { getUserListings } from '../api/ListingsApi';
 
 const Profile = () => {
   const { user } = useAuth();
-  console.log(user)
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -15,6 +15,15 @@ const Profile = () => {
     }
   };
 
+  const getListings = async (email) => {
+    const res = await getUserListings(email)
+    console.log(res.listings)
+  }
+
+  useEffect(() => {
+    getListings(user.email)
+  }, [])
+  
   return (
     <div className="max-w-3xl my-10 mx-auto p-6 bg-white rounded-lg shadow-md">
       <div className="flex items-center space-x-4">

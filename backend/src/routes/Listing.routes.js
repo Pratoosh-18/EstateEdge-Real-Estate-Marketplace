@@ -5,7 +5,7 @@ const listingRoutes = Router();
 
 listingRoutes.post('/create', createListing);
 listingRoutes.get('/getListings', getListings);
-listingRoutes.get('/getUserListings', getUserListings);
+listingRoutes.post('/getUserListings', getUserListings);
 listingRoutes.post('/buyListing', buyListing);
 listingRoutes.delete('/deleteListing',deleteListing);
 listingRoutes.get('/getListing/:listingId', getListing);

@@ -73,4 +73,20 @@ const createListing = async (formDataToSend) => {
     }
 };
 
-export { fetchListings, getAllListings, fetchListingDetails, createListing };
+const getUserListings = async (email) => {
+    try {
+        const response = await apiClient.post("/api/v1/listing/getUserListings",
+            {
+                email
+            },{
+            headers: { "Content-Type": "multipart/form-data" },
+        })
+
+        return response.data
+    } catch (error) {
+        console.error("Error in getting listings", error);
+        throw error;
+    }
+}
+
+export { fetchListings, getAllListings, fetchListingDetails, createListing, getUserListings };
