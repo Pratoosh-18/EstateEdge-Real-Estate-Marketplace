@@ -103,22 +103,19 @@ const getListing = asyncHandler(async (req, res) => {
 
 
 const getUserListings = asyncHandler(async (req, res) => {
-    const { email } = req.body; // Get email from the request body
+    const { email } = req.body;
     if (!email) {
         throw new ApiError(400, "Email parameter is required");
     }
 
     try {
-        // Find the user by email
         const user = await User.findOne({ email });
         if (!user) {
             throw new ApiError(404, "User not found");
         }
 
-        // Find listings where owner matches the user's _id
         const listings = await Listing.find({ owner: user._id });
 
-        // Return the listings
         return res.status(200).json({ listings });
     } catch (error) {
         console.error("An error occurred while retrieving user listings:", error);
