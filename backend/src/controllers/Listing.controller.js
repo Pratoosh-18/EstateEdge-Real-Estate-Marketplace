@@ -103,30 +103,29 @@ const getListing = asyncHandler(async (req, res) => {
 
 
 const getUserListings = asyncHandler(async (req, res) => {
-
-    console.log(" Get user listings called ")
-    const { email } = req.body; // Get email from request parameters
-
-    console.log(email)
-
+    const { email } = req.body; // Get email from the request body
     if (!email) {
         throw new ApiError(400, "Email parameter is required");
     }
 
     try {
-        // Find listings where ownerEmail matches the provided email
-        const listings = await Listing.find({ ownerEmail: email }).populate('owner', 'username email avatar');
-        if (listings.length === 0) {
-            return res.status(404).json({ message: "No listings found for this email" });
+        // Find the user by email
+        const user = await User.findOne({ email });
+        if (!user) {
+            throw new ApiError(404, "User not found");
         }
 
-        console.log("User listings retrieved successfully");
+        // Find listings where owner matches the user's _id
+        const listings = await Listing.find({ owner: user._id });
+
+        // Return the listings
         return res.status(200).json({ listings });
     } catch (error) {
         console.error("An error occurred while retrieving user listings:", error);
         throw new ApiError(500, 'Internal server error');
     }
 });
+
 
 const buyListing = asyncHandler(async (req, res) => {
     const { listingId } = req.body;

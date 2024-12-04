@@ -20,7 +20,6 @@ const generateAccessToken = (userId) => {
 };
 
 
-
 const registerUser = asyncHandler(async (req, res) => {
     console.log("Register called");
     const { username, email, password } = req.body;
