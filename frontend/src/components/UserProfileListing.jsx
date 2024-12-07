@@ -1,6 +1,15 @@
 import React from 'react'
+import { deleteListing } from '../api/ListingsApi'
+import { MdOutlineDeleteOutline } from "react-icons/md";
 
 const UserProfileListing = ({ listing }) => {
+
+    const handleDelete = async (id) => {
+        console.log(id)
+        const res = await deleteListing(id);
+        console.log(res)
+    }
+
     return (
         <div className="p-4 w-full gap-5 md:flex bg-white rounded-lg shadow-md hover:shadow-lg transition">
             <div className='md:w-[40%]'>
@@ -24,6 +33,9 @@ const UserProfileListing = ({ listing }) => {
                     </div>
                 </div>
             </div>
+            <button className='text-3xl text-red-600 hover:scale-125 transition' onClick={() => handleDelete(listing._id)}>
+                <MdOutlineDeleteOutline />
+            </button>
         </div>
     );
 }

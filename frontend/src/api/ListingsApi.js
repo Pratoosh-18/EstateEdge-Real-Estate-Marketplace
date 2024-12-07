@@ -89,4 +89,17 @@ const getUserListings = async (email) => {
     }
 }
 
-export { fetchListings, getAllListings, fetchListingDetails, createListing, getUserListings };
+const deleteListing = async (listingId) => {
+    try {
+        const response = await apiClient.delete("/api/v1/listing/deleteListing", {
+            data: { listingId: listingId },
+            headers: { "Content-Type": "application/json" },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting listing:", error);
+        throw error; 
+    }
+};
+
+export { fetchListings, getAllListings, fetchListingDetails, createListing, getUserListings, deleteListing };
